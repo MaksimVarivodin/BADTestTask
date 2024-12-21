@@ -14,6 +14,12 @@ namespace errors {
 
     enum ERROR_CODE: size_t {
         SUCCESS,
+        // arraySizeIsValid Errors
+        BAD_ARRAY_SIZE,
+        // stringSizeIsValid
+        BAD_STR_SIZE,
+        // substringSizeIsValid
+        BAD_SUBSTR_SIZE,
         // sto Errors
         PARSE_FAILED,
         // numberIsValid Errors

@@ -5,9 +5,14 @@ set(HEADERS
         FileReader/ReaderFunctions.hpp
         ErrorCodeStrings/ErrorCodes.hpp
         BracedException/BracedException.hpp
-        FileReader/ReaderFunctions.inl)
+        FileReader/ReaderFunctions.inl
+        Vertex/Vertex.hpp
+        Vertex/Vertex.inl
+        Graph/Graph.hpp
+        Graph/Graph.inl
+)
 set(SOURCE
-        ErrorCodeStrings/ErrorCodes.cpp
+
         ErrorCodeStrings/ErrorCodes.cpp
         FileReader/ReaderFunctions.cpp
 )
@@ -20,6 +25,7 @@ add_executable(${PROJECT_NAME}
         FileReader
         ErrorCodeStrings
         BracedException
+        Vertex
         # Adding project headers
         ${HEADERS}
         # Adding project source files

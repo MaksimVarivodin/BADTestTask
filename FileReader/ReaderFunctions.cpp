@@ -4,27 +4,31 @@
 #include "ReaderFunctions.hpp"
 
 namespace reader {
-    list<string> readFile(const string &fileName) {
-        ifstream in(fileName);
-        // if file is not opened then throw exception
-        if (!in.is_open())
+    void arraySizeIsValid(const size_t &arraySize) {
+        if (arraySize <= 0)
             throw exceptionInFunction(
                 __FUNCTION__,
-                ERROR_MESSAGES[FILE_NOT_OPENED], fileName);
-        list<string> lines;
+                ERROR_MESSAGES[BAD_ARRAY_SIZE], arraySize);
+    }
 
-        while (!in.eof()) {
-            string line;
-            getline(in, line);
-            // if line is invalid then throw exception and continue
-            try {
-                tryFunction(__FUNCTION__, stringIsValid<int16_t>, line, 6, 2, 0, 99);
-                lines.push_back(line);
-            } catch (const BracedException &ex) {
-                cerr << ex.what() << endl;
-            }
-        }
-        in.close();
-        return lines;
+    void stringSizeIsValid(const size_t &stringSize) {
+        if (stringSize <= 0)
+            throw exceptionInFunction(
+                __FUNCTION__,
+                ERROR_MESSAGES[BAD_STR_SIZE], stringSize);
+    }
+
+    void substringSizeIsValid(const size_t &substringSize) {
+        if (substringSize <= 0)
+            throw exceptionInFunction(
+                __FUNCTION__,
+                ERROR_MESSAGES[BAD_SUBSTR_SIZE], substringSize);
+    }
+
+    void stringSizeIsEqual(const string &stringValue, const size_t &stringSize) {
+        if (stringValue.size() != stringSize)
+            throw exceptionInFunction(
+                __FUNCTION__,
+                ERROR_MESSAGES[STRING_WRONG_SIZE], stringValue.size(), stringSize);
     }
 }
