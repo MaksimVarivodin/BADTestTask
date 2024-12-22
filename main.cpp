@@ -21,11 +21,8 @@ int main(int argc, char *argv[]) {
         auto list = tryFunction(__FUNCTION__, readFileToList<int16_t, VERTEX_COUNT, STRING_SIZE>, inputFile);
         auto data = listToMap(list);
         Graph<int16_t, 3> graph = Graph<int16_t, 3>::createGraph(data);
-        cout << graph::to_string(graph) << endl;
         auto dfs = graph.dfs();
-        for (auto &df: dfs) {
-            cout << graph::to_string(*df) << "->";
-        }
+        cout << longestPathToString(dfs) << endl;
     } catch (const BracedException &ex) {
         std::cerr << ex.what() << std::endl;
     }

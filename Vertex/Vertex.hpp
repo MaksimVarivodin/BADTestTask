@@ -37,7 +37,7 @@ namespace graph {
 
         const vType &first() const { return (*vNumbers_)[0]; }
         const vType &last() const { return (*vNumbers_)[vCount - 1]; }
-        const vType& middle() const {return (*vNumbers_)[vCount / 2 + vCount%2];}
+        const vType& middle() const {return (*vNumbers_)[vCount / 2];}
 
         const VertexNumbers<vType, vCount> &vNumbers() const;
 

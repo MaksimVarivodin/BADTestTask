@@ -7,6 +7,7 @@
 #include "../Vertex/Vertex.hpp"
 #include <functional>
 #include <unordered_set>
+#include <cmath>
 
 namespace graph {
     template<typename vType, size_t vCount>
@@ -20,7 +21,6 @@ namespace graph {
         vector<shared_ptr<Vertex<vType, vCount> > > vertices_;
 
     public:
-        // DFS
         list<shared_ptr<Vertex<vType, vCount> > > dfs();
 
         static Graph<vType, vCount> createGraph(const map<vType, vector<VertexNumbers<vType, vCount> > > &vData);
@@ -30,7 +30,11 @@ namespace graph {
 
     private:
         void sortByEdgeCount();
+
+        double keyGenerator(const std::shared_ptr<Vertex<vType, vCount> > &vertex);
     };
+    template<typename vType, size_t vCount>
+    string longestPathToString(const list<shared_ptr<Vertex<vType, vCount> > >&p);
 } // graph
 
 #endif //GRAPH_HPP

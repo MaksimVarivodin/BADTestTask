@@ -18,50 +18,56 @@ namespace graph {
     }
 
     //TODO: Implement DFS
-    /*template<typename vType, size_t vCount>
+    template<typename vType, size_t vCount>
     double Graph<vType, vCount>::keyGenerator(
         const std::shared_ptr<Vertex<vType, vCount> > &vertex) {
-        return static_cast<double>(vertex->first() * vertex->last() * vertex->middle());
+        return static_cast<double>(vertex->first() * 10000 + vertex->middle() * 100 + vertex->middle());
     }
-
 
 
     template<typename vType, size_t vCount>
     list<shared_ptr<Vertex<vType, vCount> > > Graph<vType, vCount>::dfs() {
         sortByEdgeCount();
-        std::unordered_set<double> visited;
-        std::list<std::shared_ptr<Vertex<vType, vCount> > > traversal;
 
+        list<shared_ptr<Vertex<vType, vCount> > > longestCombination;
         function<list<shared_ptr<Vertex<vType, vCount> > >
-            (const std::shared_ptr<Vertex<vType, vCount> > &)> dfsHelper =
-                [&](const std::shared_ptr<Vertex<vType, vCount> > &vertex) {
+            (const shared_ptr<Vertex<vType, vCount> > &,
+             list<shared_ptr<Vertex<vType, vCount> > >,
+             unordered_set<double>)> dfsHelper =
+                [&](const shared_ptr<Vertex<vType, vCount> > &vertex,
+                    list<shared_ptr<Vertex<vType, vCount> > > traversal,
+                    unordered_set<double> visited) {
             // Some random calculations to create unique key
             const double key = keyGenerator(vertex);
-            cout << "Key: " << key << endl;
             if (!vertex || visited.contains(key)) {
-                return;
+                return traversal;
             }
 
             visited.insert(key);
             traversal.push_back(vertex);
-
+            auto traversalCopy = traversal;
+            auto visitedCopy = visited;
             // Рекурсивно обходим соседей
             for (const auto &neighbor: vertex->edges()) {
-                dfsHelper(neighbor);
+                if (auto newTraversal = dfsHelper(neighbor, traversalCopy, visited);
+                    newTraversal.size() > traversal.size()) {
+                    traversal = newTraversal;
+                }
             }
+            return traversal;
         };
+
         // Итерируемся по всем вершинам графа
         for (const auto &vertex: vertices_) {
             if (!vertex) continue;
-            double key = keyGenerator(vertex);
-            cout << "Key: " << key << endl;
-            if (!visited.contains(key)) {
-                dfsHelper(vertex);
+            if (auto newCombination = dfsHelper(vertex, {}, {});
+                newCombination.size() > longestCombination.size()) {
+                longestCombination = newCombination;
             }
         }
 
-        return traversal;
-    }*/
+        return longestCombination;
+    }
 
     template<typename vType, size_t vCount>
     Graph<vType, vCount> Graph<vType, vCount>::createGraph(
@@ -72,7 +78,7 @@ namespace graph {
         for (const auto &[key, vDataList]: vData)
             for (const auto &vDataListElement: vDataList)
                 vertexMap[key].push_back(make_shared<Vertex<vType, vCount> >(vDataListElement));
-        // Creating connections between vertices
+        // Adding edges that don't have any neighbors
         auto vertexIterator(vertexMap.begin());
         for (; vertexIterator->first < 0; ++vertexIterator) {
             for (const auto &vertex: vertexIterator->second)
@@ -81,7 +87,7 @@ namespace graph {
                         if (addEdgeElement->first() != vertex->first())
                             addEdgeElement->addEdge(vertex);
         }
-
+        // Adding to edges to vertices that have at least 1 edge
         for (; vertexIterator != vertexMap.end(); ++vertexIterator)
             for (const auto &vertex: vertexIterator->second)
                 if (vertexMap.contains(vertex->first()))
@@ -106,6 +112,21 @@ namespace graph {
                 result += "  ->" + to_string(*e) + "\n";
             }
         }
+        return result;
+    }
+
+    template<typename vType, size_t vCount>
+    string longestPathToString(const list<shared_ptr<Vertex<vType, vCount> > >&p) {
+        string result;
+        int count= 0;
+        auto it = p.begin();
+        for(; count < p.size() -1; ++it, ++count) {
+            result += (((*it)->first() < 10) ? "0" : "" ) + std::to_string((*it)->first());
+            result += (((*it)->middle() < 10) ?"0" : "") + std::to_string((*it)->middle());
+        }
+        result += (((*it)->first() < 10) ? "0" : "" ) + std::to_string((*it)->first());
+        result += (((*it)->middle() < 10) ?"0" : "") + std::to_string((*it)->middle());
+        result += (((*it)->last() < 10) ?"0" : "") + std::to_string((*it)->last());
         return result;
     }
 }
