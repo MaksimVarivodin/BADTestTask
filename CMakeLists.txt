@@ -19,13 +19,13 @@ set(SOURCE
 # Setting c++ standard of the project
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(${PROJECT_NAME}
+add_executable(test_task
         # Adding project folders, so we can see if they don't exist
-        ConsoleUI
         FileReader
         ErrorCodeStrings
         BracedException
         Vertex
+        Graph
         # Adding project headers
         ${HEADERS}
         # Adding project source files

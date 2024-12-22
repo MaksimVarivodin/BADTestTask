@@ -21,48 +21,54 @@ namespace graph {
     template<typename vType, size_t vCount>
     double Graph<vType, vCount>::keyGenerator(
         const std::shared_ptr<Vertex<vType, vCount> > &vertex) {
-        return static_cast<double>(vertex->first() * 10000 + vertex->middle() * 100 + vertex->middle());
+        return static_cast<double>(vertex->first() * 10000 + vertex->middle() * 100 + vertex->last());
     }
 
 
     template<typename vType, size_t vCount>
     list<shared_ptr<Vertex<vType, vCount> > > Graph<vType, vCount>::dfs() {
-        sortByEdgeCount();
-
-        list<shared_ptr<Vertex<vType, vCount> > > longestCombination;
-        function<list<shared_ptr<Vertex<vType, vCount> > >
+        function<void
             (const shared_ptr<Vertex<vType, vCount> > &,
-             list<shared_ptr<Vertex<vType, vCount> > >,
-             unordered_set<double>)> dfsHelper =
+             list<shared_ptr<Vertex<vType, vCount> > > &,
+             unordered_set<double>,
+             unordered_set<double> &)> dfsHelper =
                 [&](const shared_ptr<Vertex<vType, vCount> > &vertex,
-                    list<shared_ptr<Vertex<vType, vCount> > > traversal,
-                    unordered_set<double> visited) {
+                    list<shared_ptr<Vertex<vType, vCount> > > &traversal,
+                    unordered_set<double> visited,
+                    unordered_set<double> &globalVisited) {
             // Some random calculations to create unique key
             const double key = keyGenerator(vertex);
             if (!vertex || visited.contains(key)) {
-                return traversal;
+                return;
             }
 
             visited.insert(key);
+            if (!globalVisited.contains(key))
+                globalVisited.insert(key);
             traversal.push_back(vertex);
             auto traversalCopy = traversal;
             auto visitedCopy = visited;
             // Рекурсивно обходим соседей
             for (const auto &neighbor: vertex->edges()) {
-                if (auto newTraversal = dfsHelper(neighbor, traversalCopy, visited);
-                    newTraversal.size() > traversal.size()) {
-                    traversal = newTraversal;
+                dfsHelper(neighbor, traversalCopy, visited, globalVisited);
+                if (traversalCopy.size() > traversal.size()) {
+                    traversal = traversalCopy;
                 }
             }
-            return traversal;
         };
+        sortByEdgeCount();
+
+        list<shared_ptr<Vertex<vType, vCount> > > longestCombination;
+        unordered_set<double> globalVisited;
 
         // Итерируемся по всем вершинам графа
         for (const auto &vertex: vertices_) {
-            if (!vertex) continue;
-            if (auto newCombination = dfsHelper(vertex, {}, {});
-                newCombination.size() > longestCombination.size()) {
-                longestCombination = newCombination;
+            if (const double key = keyGenerator(vertex); !globalVisited.contains(key)) {
+                list<shared_ptr<Vertex<vType, vCount> > > newCombination;
+                dfsHelper(vertex, newCombination, {}, globalVisited);
+                if (newCombination.size() > longestCombination.size()) {
+                    longestCombination = newCombination;
+                }
             }
         }
 
@@ -116,17 +122,17 @@ namespace graph {
     }
 
     template<typename vType, size_t vCount>
-    string longestPathToString(const list<shared_ptr<Vertex<vType, vCount> > >&p) {
+    string longestPathToString(const list<shared_ptr<Vertex<vType, vCount> > > &p) {
         string result;
-        int count= 0;
+        int count = 0;
         auto it = p.begin();
-        for(; count < p.size() -1; ++it, ++count) {
-            result += (((*it)->first() < 10) ? "0" : "" ) + std::to_string((*it)->first());
-            result += (((*it)->middle() < 10) ?"0" : "") + std::to_string((*it)->middle());
+        for (; count < p.size() - 1; ++it, ++count) {
+            result += (((*it)->first() < 10) ? "0" : "") + std::to_string((*it)->first());
+            result += (((*it)->middle() < 10) ? "0" : "") + std::to_string((*it)->middle());
         }
-        result += (((*it)->first() < 10) ? "0" : "" ) + std::to_string((*it)->first());
-        result += (((*it)->middle() < 10) ?"0" : "") + std::to_string((*it)->middle());
-        result += (((*it)->last() < 10) ?"0" : "") + std::to_string((*it)->last());
+        result += (((*it)->first() < 10) ? "0" : "") + std::to_string((*it)->first());
+        result += (((*it)->middle() < 10) ? "0" : "") + std::to_string((*it)->middle());
+        result += (((*it)->last() < 10) ? "0" : "") + std::to_string((*it)->last());
         return result;
     }
 }

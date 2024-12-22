@@ -12,17 +12,19 @@ GRAPH_
 
 int main(int argc, char *argv[]) {
     string inputFile = "source.txt";
-    string outputFile = "output.txt";
     if (argc > 1)
         inputFile = argv[1];
-    if (argc > 2)
-        outputFile = argv[2];
     try {
         auto list = tryFunction(__FUNCTION__, readFileToList<int16_t, VERTEX_COUNT, STRING_SIZE>, inputFile);
+        cout << "1. Read data from file: " << inputFile << endl;
         auto data = listToMap(list);
+        cout << "2. Converted string list to map" << endl;
         Graph<int16_t, 3> graph = Graph<int16_t, 3>::createGraph(data);
+        cout << "3. Created graph" << endl;
+        cout << "4. Starting DFS" << endl;
         auto dfs = graph.dfs();
-        cout << longestPathToString(dfs) << endl;
+        cout << "5. DFS finished" << endl;
+        cout << "6. Longest path: " << longestPathToString(dfs) << endl;
     } catch (const BracedException &ex) {
         std::cerr << ex.what() << std::endl;
     }
