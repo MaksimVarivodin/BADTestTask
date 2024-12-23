@@ -1,11 +1,17 @@
-//
-// Created by Maksym on 16.12.2024.
-//
+/**
+ * @file ErrorCodes.cpp
+ * @brief This file contains the implementation of error messages for the error codes.
+ * @author Maksym
+ * @date 16.12.2024
+ */
+
 #include "ErrorCodes.hpp"
-namespace errors
-{
-    /*
-     * Const vector of error messages for BracedException
+
+namespace errors {
+    /**
+     * @brief Const vector of error messages corresponding to the error codes.
+     *
+     * This vector contains error messages for each error code, including placeholders for dynamic values.
      */
     extern const vector<string> ERROR_MESSAGES{
         "Success",
