@@ -45,6 +45,8 @@ namespace graph {
 
         template<typename T, size_t C>
         friend string to_string(const Vertex<T, C> &vertex);
+        [[nodiscard]] string puzzlePart() const;
+        [[nodiscard]] string puzzlePartLast() const;
 
     };
 }

@@ -9,15 +9,16 @@ namespace graph {
     template<typename vType, size_t vCount>
     void Graph<vType, vCount>::sortByEdgeCount() {
         function<bool(const shared_ptr<Vertex<vType, vCount> > &,
-                      const shared_ptr<Vertex<vType, vCount> > &)> compare =
-                [&](const shared_ptr<Vertex<vType, vCount> > &a,
-                    const shared_ptr<Vertex<vType, vCount> > &b) {
-            return a->edges().size() > b->edges().size();
-        };
+                      const shared_ptr<Vertex<vType, vCount> > &)>
+                compare =
+                        [&](const shared_ptr<Vertex<vType, vCount> > &a,
+                            const shared_ptr<Vertex<vType, vCount> > &b) {
+                    return a->edges().size() > b->edges().size();
+                };
         std::sort(vertices_.begin(), vertices_.end(), compare);
     }
 
-    //TODO: Implement DFS
+
     template<typename vType, size_t vCount>
     double Graph<vType, vCount>::keyGenerator(
         const std::shared_ptr<Vertex<vType, vCount> > &vertex) {
@@ -26,50 +27,59 @@ namespace graph {
 
 
     template<typename vType, size_t vCount>
-    list<shared_ptr<Vertex<vType, vCount> > > Graph<vType, vCount>::dfs() {
-        function<void
-            (const shared_ptr<Vertex<vType, vCount> > &,
-             list<shared_ptr<Vertex<vType, vCount> > > &,
-             unordered_set<double>,
-             unordered_set<double> &)> dfsHelper =
-                [&](const shared_ptr<Vertex<vType, vCount> > &vertex,
-                    list<shared_ptr<Vertex<vType, vCount> > > &traversal,
-                    unordered_set<double> visited,
-                    unordered_set<double> &globalVisited) {
-            // Some random calculations to create unique key
-            const double key = keyGenerator(vertex);
-            if (!vertex || visited.contains(key)) {
-                return;
-            }
+    string Graph<vType, vCount>::dfsHelper(const shared_ptr<Vertex<vType, vCount> > &vertex,
+                                           unordered_set<double> visited,
+                                           map<double, string> &visitedCache) {
+        // Some random calculations to create unique key
+        const double key = keyGenerator(vertex);
+        if (!vertex)
+            return "";
+        if (visited.contains(key))
+            return "";
+        if (visitedCache.contains(key))
+            return visitedCache[key];
+        visited.insert(key);
 
-            visited.insert(key);
-            if (!globalVisited.contains(key))
-                globalVisited.insert(key);
-            traversal.push_back(vertex);
-            auto traversalCopy = traversal;
-            auto visitedCopy = visited;
-            // Рекурсивно обходим соседей
+        // Getting the current vertex puzzle part
+        string innerTraversal = vertex->puzzlePart();
+        if (!vertex->edges().empty()) {
+            string longestNeighbor;
+
+            // Iterating over all neighbors
             for (const auto &neighbor: vertex->edges()) {
-                dfsHelper(neighbor, traversalCopy, visited, globalVisited);
-                if (traversalCopy.size() > traversal.size()) {
-                    traversal = traversalCopy;
-                }
+                // Finding the longest path from the neighbor
+                string vertexTempPath = dfsHelper(neighbor, visited, visitedCache);
+                if (vertexTempPath.length() > longestNeighbor.length())
+                    longestNeighbor = vertexTempPath;
             }
-        };
+            // if all neighbors are visited, we need to add the last part of the puzzle
+            if (longestNeighbor.empty())
+                longestNeighbor += vertex->puzzlePartLast();
+            // Saving longest path from the current vertex
+            innerTraversal += longestNeighbor;
+        }
+
+
+        // Caching  the current vertex path
+        if (!visitedCache.contains(key))
+            visitedCache[key] = innerTraversal;
+        return innerTraversal;
+    }
+
+    template<typename vType, size_t vCount>
+    string Graph<vType, vCount>::dfs() {
         sortByEdgeCount();
-
-        list<shared_ptr<Vertex<vType, vCount> > > longestCombination;
-        unordered_set<double> globalVisited;
-
+        string longestCombination;
+        map<double, string> globalVisited;
         // Итерируемся по всем вершинам графа
         for (const auto &vertex: vertices_) {
-            if (const double key = keyGenerator(vertex); !globalVisited.contains(key)) {
-                list<shared_ptr<Vertex<vType, vCount> > > newCombination;
-                dfsHelper(vertex, newCombination, {}, globalVisited);
-                if (newCombination.size() > longestCombination.size()) {
-                    longestCombination = newCombination;
-                }
-            }
+            const double key = keyGenerator(vertex);
+            string newCombination;
+            if (!globalVisited.contains(key))
+                newCombination = dfsHelper(vertex, {}, globalVisited);
+
+            if (newCombination.size() > longestCombination.size())
+                longestCombination = std::move(newCombination);
         }
 
         return longestCombination;
@@ -109,6 +119,26 @@ namespace graph {
         return Graph(graph);
     }
 
+    template<typename vType, size_t vCount>
+    void Graph<vType, vCount>::puzzleCombinationIsValid(const string &combination) const {
+        size_t i = 0;
+
+        // Check all connected vertices
+        for (; i < combination.length() - 4; i += 4) {
+            if (findVertex(combination.substr(i, 6)) == -1)
+                throw exceptionInFunction(
+                    __FUNCTION__,
+                    ERROR_MESSAGES[PUZZLE_INVALID], combination.substr(i, 6), i, i + 6);
+        }
+        i = combination.length() - 6;
+        // Check the last vertex
+        if (findVertex(combination.substr(i, 6)) == -1)
+            throw exceptionInFunction(
+                __FUNCTION__,
+                ERROR_MESSAGES[PUZZLE_INVALID], combination.substr(i, 6), i, i + 6);
+    }
+
+
     template<typename T, size_t C>
     string to_string(const Graph<T, C> &vertex) {
         string result;
@@ -122,18 +152,13 @@ namespace graph {
     }
 
     template<typename vType, size_t vCount>
-    string longestPathToString(const list<shared_ptr<Vertex<vType, vCount> > > &p) {
-        string result;
-        int count = 0;
-        auto it = p.begin();
-        for (; count < p.size() - 1; ++it, ++count) {
-            result += (((*it)->first() < 10) ? "0" : "") + std::to_string((*it)->first());
-            result += (((*it)->middle() < 10) ? "0" : "") + std::to_string((*it)->middle());
-        }
-        result += (((*it)->first() < 10) ? "0" : "") + std::to_string((*it)->first());
-        result += (((*it)->middle() < 10) ? "0" : "") + std::to_string((*it)->middle());
-        result += (((*it)->last() < 10) ? "0" : "") + std::to_string((*it)->last());
-        return result;
+    signed long long Graph<vType, vCount>::findVertex(const string &vertex) const {
+
+        signed long long index = 0;
+        for (; index < vertices_.size(); ++index)
+            if (!to_string(*(vertices_[index])).compare(vertex))
+                return index;
+        return -1;
     }
 }
 #endif //GRAPH_INL

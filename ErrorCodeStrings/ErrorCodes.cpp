@@ -17,6 +17,7 @@ namespace errors
         "Number is too big ({}, max is {})",
         "String is empty",
         "String has wrong size ({} instead of {})",
-        "Couldn't open file ({})"
+        "Couldn't open file ({})",
+        "Puzzle combination is invalid ({} at position {}-{})",
     };
 }

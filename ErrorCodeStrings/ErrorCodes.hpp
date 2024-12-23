@@ -30,6 +30,8 @@ namespace errors {
         STRING_WRONG_SIZE,
         // readFile Errors
         FILE_NOT_OPENED,
+        // puzzleCombinationIsValid Errors
+        PUZZLE_INVALID,
     };
 }
 #endif // ERROR_CODES_STRINGS_HPP

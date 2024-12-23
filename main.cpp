@@ -16,15 +16,17 @@ int main(int argc, char *argv[]) {
         inputFile = argv[1];
     try {
         auto list = tryFunction(__FUNCTION__, readFileToList<int16_t, VERTEX_COUNT, STRING_SIZE>, inputFile);
-        cout << "1. Read data from file: " << inputFile << endl;
+        cout << "1. Read data from file: {" << inputFile << "}." << endl;
         auto data = listToMap(list);
-        cout << "2. Converted string list to map" << endl;
+        cout << "2. Converted string list to map." << endl;
         Graph<int16_t, 3> graph = Graph<int16_t, 3>::createGraph(data);
-        cout << "3. Created graph" << endl;
-        cout << "4. Starting DFS" << endl;
+        cout << "3. Created graph." << endl;
+        cout << "4. Starting DFS." << endl;
         auto dfs = graph.dfs();
-        cout << "5. DFS finished" << endl;
-        cout << "6. Longest path: " << longestPathToString(dfs) << endl;
+        cout << "5. DFS finished." << endl;
+        cout << "6. Longest puzzle path: \n" << dfs << endl;
+        graph.puzzleCombinationIsValid(dfs);
+        cout << "7. Puzzle combination is valid." << endl;
     } catch (const BracedException &ex) {
         std::cerr << ex.what() << std::endl;
     }

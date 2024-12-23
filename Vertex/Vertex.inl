@@ -10,7 +10,7 @@ namespace graph {
     string to_string(const Vertex<T, C> &vertex) {
         string result;
         for (T number: *(vertex.vNumbers_))
-            result += std::to_string(number);
+            result += ((number < 10) ? "0" : "") + std::to_string(number);
         return result;
     }
 
@@ -27,6 +27,20 @@ namespace graph {
     template<typename vType, size_t vCount>
     void Vertex<vType, vCount>::addEdge(const Edge<vType, vCount> &edge) {
         edges_.push_back(edge);
+    }
+
+    template<typename vType, size_t vCount>
+    string Vertex<vType, vCount>::puzzlePart() const {
+        return string(((first() < 10) ? "0" : "") + std::to_string(first()) +
+                      ((middle() < 10) ? "0" : "") + std::to_string(middle()) +
+                      (edges_.empty()
+                           ? ((last() < 10) ? "0" : "") + std::to_string(last())
+                           : ""));
+    }
+
+    template<typename vType, size_t vCount>
+    string Vertex<vType, vCount>::puzzlePartLast() const {
+        return ((last() < 10) ? "0" : "") + std::to_string(last());
     }
 }
 #endif //VERTEX_INL
