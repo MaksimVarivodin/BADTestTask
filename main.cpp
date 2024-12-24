@@ -44,7 +44,9 @@ int main(int argc, char *argv[]) {
 
         cout << "5. DFS finished." << endl;
 
-        cout << "6. Longest puzzle path: \n" << dfs << endl;
+        cout << "6. Longest puzzle:\n* Combination: \n" << dfs << endl;
+
+        cout << "* Length: " << dfs.length() << endl;
 
         graph.puzzleCombinationIsValid(dfs);
 
