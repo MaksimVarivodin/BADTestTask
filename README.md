@@ -70,7 +70,7 @@ This project implements a graph data structure to solve a puzzle.
 
 To explain how the project works, you would better see small illustrations and the console outputs.
 
-```input.txt```:
+```out/testData.txt```:
 
 ```
 345120
@@ -90,13 +90,13 @@ To explain how the project works, you would better see small illustrations and t
 F.e.:
 
 ```
-FFFFF -> 345120
+FFFFF -> [34,51,20]
 |
 V
-00000 -> 120345
+00000 -> [12,03,45]
 |
 V
-11111 -> 789012
+11111 -> [78,90,12]
 |
 V
 ... 
@@ -104,17 +104,18 @@ V
 
 ##### 2. We transform a list to a map which has negative and positive keys
 
-Positive stand for elements that have edges, negative stand for elements that don't have edges, but they are connected
+Positive keys stand for elements that have edges, negative stand for elements that don't have edges, but they are
+connected
 to at least one of the positive.
 This is where we also filter unused 6-digit numbers.
 
 F.e.:
 
 ```
-34 -> 561234, 901234
+34 -> [[56,12,34], [90,12,34]]
 |
 V
--46 -> 120345
+-46 -> [[12,03,45]]
 |
 V
 ... 
@@ -122,7 +123,7 @@ V
 
 ##### 3. We create a graph of connected vertices
 
-F.e. here is output for our ```input.txt```:
+F.e. here is output for our ```out/testData.txt```:
 
 ```
 _____________
@@ -154,8 +155,6 @@ _____________
 
 ![DFS](out/graphVisualization.gif)
 
-_You can see how I generated frames for this GIF here: [graphVisualization](out/visualizeGraph.py)._
-
 ##### 5. We output the longest path.
 
 Longest path is:
@@ -172,9 +171,9 @@ So the output we get is:
 
 #### 6. We check in a cycle if the numbers are valid.
 
-_You can see how I generated frames for this GIF here: [graphVisualization](out/visualizeGraph.py)._
+###### _You can see how I generated frames for this GIF here: [graphVisualization](out/visualizeGraph.py)._
 
-_Testing dataset: [txt file](out/testData.txt)._
+###### _Testing dataset: [txt file](out/testData.txt)._
 
 [Contents](#table-of-contents)
 
