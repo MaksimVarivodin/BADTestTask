@@ -17,7 +17,7 @@ namespace graph {
         function<bool(const shared_ptr<Vertex<vType, vCount> > &, const shared_ptr<Vertex<vType, vCount> > &)>
                 compare = [&](const shared_ptr<Vertex<vType, vCount> > &a,
                               const shared_ptr<Vertex<vType, vCount> > &b) {
-                    return a->edges().size() > b->edges().size();
+                    return a->edges().size() < b->edges().size();
                 };
         std::sort(vertices_.begin(), vertices_.end(), compare);
     }
@@ -37,105 +37,90 @@ namespace graph {
         return static_cast<double>(vertex->first() * 10000 + vertex->middle() * 100 + vertex->last());
     }
 
+
     /**
-     * @brief Helper function for the depth-first search (DFS) algorithm.
+     * @brief Helper function for depth-first search (DFS) traversal.
      *
-     * This function recursively explores the graph starting from a given vertex,
-     * keeping track of visited vertices and the paths taken to reach them.
-     * It uses a unique key for each vertex to avoid revisiting vertices and to cache the paths.
+     * This function performs a DFS traversal starting from the given vertex.
+     * It keeps track of visited vertices using a set and constructs the longest path
+     * by recursively visiting neighboring vertices.
      *
-     * @param vertex The vertex from which the DFS traversal starts.
-     * @param visited Set to keep track of visited vertices.
-     * @param visitedCache Map to cache the paths taken to reach visited vertices.
-     * @return The longest path found from the given vertex.
+     * @param vertex The starting vertex for the DFS traversal.
+     * @param visited A set to keep track of visited vertices.
+     * @return The longest path found from the starting vertex.
      */
     template<typename vType, size_t vCount>
     string Graph<vType, vCount>::dfsHelper(const shared_ptr<Vertex<vType, vCount> > &vertex,
-                                           unordered_set<double> visited,
-                                           map<double, string> &visitedCache) {
-        // Some random calculations to create unique key
-        const double key = keyGenerator(vertex);
+                                           unordered_set<double> &visited) {
+        // Generate a unique key for the current vertex
+        double vertexKey = keyGenerator(vertex);
 
-        // The vertex mustn't be null
+        // If the vertex is null, return an empty string
         if (!vertex)
-            return "";
+            return {};
 
-        // The vertex mustn't be visited
-        if (visited.contains(key))
-            return "";
+        // If the vertex has already been visited, return an empty string
+        if (visited.contains(vertexKey))
+            return {};
 
-        // If we have cached result, we return it
-        if (visitedCache.contains(key))
-            return visitedCache[key];
+        // Mark the vertex as visited
+        visited.insert(vertexKey);
 
-        // Adding the vertex to the visited set
-        visited.insert(key);
+        // If the vertex has no edges, return its puzzle part
+        if (vertex->edges().empty())
+            return vertex->puzzlePart();
 
-        // Getting the current vertex puzzle part
-        string innerTraversal = vertex->puzzlePart();
+        // Initialize a string to store the maximum path
+        string maxPath;
 
-        // If the vertex has neighbors
-        if (!vertex->edges().empty()) {
-            string longestNeighbor;
+        // Iterate over all neighboring vertices
+        for (const auto &neighbor: vertex->edges()) {
+            // Recursively find the longest path from the neighbor
+            string neighborPath = dfsHelper(neighbor, visited);
 
-            // Iterating over all neighbors
-            for (const auto &neighbor: vertex->edges()) {
-                // Finding the longest path from the neighbor
-                string vertexTempPath = dfsHelper(neighbor, visited, visitedCache);
-
-                // Setting the longest path from the neighbor
-                if (vertexTempPath.length() > longestNeighbor.length())
-                    longestNeighbor = vertexTempPath;
-            }
-
-            // if all neighbors are visited, we need to add the last part of the puzzle
-            if (longestNeighbor.empty())
-                longestNeighbor += vertex->puzzlePartLast();
-
-            // Saving longest path from the current vertex
-            innerTraversal += longestNeighbor;
+            // Update the maximum path if the neighbor's path is longer
+            if (neighborPath.length() > maxPath.length())
+                maxPath = std::move(neighborPath);
         }
 
-        // Caching  the current vertex path
-        if (!visitedCache.contains(key))
-            visitedCache[key] = innerTraversal;
-        return innerTraversal;
+        // If no path was found, use the vertex's last puzzle part
+        if (maxPath.empty())
+            maxPath = vertex->puzzlePartLast();
+
+        // Return the concatenated path
+        return vertex->puzzlePart() + maxPath;
     }
 
     /**
-     * @brief Performs a depth-first search (DFS) traversal of the graph.
+     * @brief Performs a depth-first search (DFS) on the graph.
      *
-     * This function starts the DFS traversal from each vertex in the graph,
-     * and keeps track of the longest path found.
-     * It uses the dfsHelper function to perform the actual DFS traversal.
+     * This function sorts the vertices by the number of edges and then
+     * iterates over each vertex to find the longest path using DFS.
      *
      * @return The longest path found in the graph.
      */
     template<typename vType, size_t vCount>
     string Graph<vType, vCount>::dfs() {
-        // Sorting vertices by the number of edges
+        // Sort vertices by the number of edges
         sortByEdgeCount();
 
-        // Current longest path
+        // Initialize a string to store the longest combination
         string longestCombination;
 
-        // Map to store cached vertices
-        map<double, string> globalVisited;
-
-        // Iterating over all vertices in the graph
+        // Iterate over all vertices in the graph
         for (const auto &vertex: vertices_) {
-            // Calculating unique key for the vertex
-            const double key = keyGenerator(vertex);
+            // Create a set to track visited vertices for the current vertex
+            unordered_set<double> oneVertexVisited;
 
-            // If the vertex is not visited, we start DFS from it
-            string newCombination;
-            if (!globalVisited.contains(key))
-                newCombination = dfsHelper(vertex, {}, globalVisited);
+            // Perform DFS from the current vertex
+            string newCombination = dfsHelper(vertex, oneVertexVisited);
 
+            // Update the longest combination if the new combination is longer
             if (newCombination.size() > longestCombination.size())
                 longestCombination = std::move(newCombination);
         }
 
+        // Return the longest combination found
         return longestCombination;
     }
 

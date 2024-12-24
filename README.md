@@ -158,11 +158,23 @@ _You can see how I generated frames for this GIF here: [graphVisualization](out/
 
 ##### 5. We output the longest path.
 
+Longest path is:
+
+```
+901234 (34) 341056 (56) 561234 (34) 345678 (78) 789012 (12) 120345
 ```
 
+So the output we get is:
+
+```
+90123410561234567890120345
 ```
 
 #### 6. We check in a cycle if the numbers are valid.
+
+_You can see how I generated frames for this GIF here: [graphVisualization](out/visualizeGraph.py)._
+
+_Testing dataset: [txt file](out/testData.txt)._
 
 [Contents](#table-of-contents)
 

@@ -56,9 +56,9 @@ namespace graph {
 
         double keyGenerator(const std::shared_ptr<Vertex<vType, vCount> > &vertex);
 
+
         string dfsHelper(const shared_ptr<Vertex<vType, vCount> > &vertex,
-                         unordered_set<double> visited,
-                         map<double, string> &visitedCache);
+                         unordered_set<double> &visited);
     };
 } // graph
 
