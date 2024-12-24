@@ -21,13 +21,13 @@ This project implements a graph data structure with vertices and edges.
 
 #### - [Program Pipeline](#program-pipeline)
 
-#### - [Graph, DFS, Puzzle](#graph-dfs-puzzle)
+#### - [`(Important)` Graph, DFS, Puzzle](#graph-dfs-puzzle)
 
 #### - [Platforms](#platforms)
 
-#### - [Building the Project](#building-the-project)
+#### - [`(Important)` Building the Project](#building-the-project)
 
-#### - [Running the Project](#running-the-project)
+#### - [`(Important)` Running the Project](#running-the-project)
 
 #### - [License](#license)
 
