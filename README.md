@@ -38,8 +38,6 @@ This project implements a graph data structure with vertices and edges.
 
 [Contents](#table-of-contents)
 
-
-
 ### Project Structure
 
 - **BracedException/**: Contains the custom exception class used in the project.
@@ -73,6 +71,7 @@ This project implements a graph data structure with vertices and edges.
 To explain how the project works, you would better see small illustrations and the console outputs.
 
 ```input.txt```:
+
 ```
 345120
 120345
@@ -85,9 +84,11 @@ To explain how the project works, you would better see small illustrations and t
 345678
 234789
 ```
+
 ##### 1. This file is read to a list of pointers to arrays, which contain 3 numbers each.
 
-F.e.: 
+F.e.:
+
 ```
 FFFFF -> 345120
 |
@@ -100,11 +101,15 @@ V
 V
 ... 
 ```
+
 ##### 2. We transform a list to a map which has negative and positive keys
-Positive stand for elements that have edges, negative stand for elements that don't have edges, but they are connected to at least one of the positive.
+
+Positive stand for elements that have edges, negative stand for elements that don't have edges, but they are connected
+to at least one of the positive.
 This is where we also filter unused 6-digit numbers.
 
-F.e.: 
+F.e.:
+
 ```
 34 -> 561234, 901234
 |
@@ -116,7 +121,9 @@ V
 ```
 
 ##### 3. We create a graph of connected vertices
-F.e. here is output for our ```input.txt```: 
+
+F.e. here is output for our ```input.txt```:
+
 ```
 _____________
 
@@ -142,9 +149,12 @@ _____________
   ->789012
 _____________
 ```
+
 ##### 4. We use DFS to find the longest combination, while caching the longest path for each vertex we visited.
 
 ![DFS](out/graphVisualization.gif)
+
+_You can see how I generated frames for this GIF here: [graphVisualization](out/visualizeGraph.py)._
 
 #### 5. We check in a cycle if the numbers are valid.
 
