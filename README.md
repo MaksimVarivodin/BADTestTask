@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project implements a graph data structure with vertices and edges.
+This project implements a graph data structure to create a solve a puzzle.
 
 ### Functionality
 
