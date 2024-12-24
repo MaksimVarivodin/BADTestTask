@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project implements a graph data structure to create a solve a puzzle.
+This project implements a graph data structure to solve a puzzle.
 
 ### Functionality
 
