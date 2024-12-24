@@ -12,10 +12,12 @@ GRAPH_
 
 int main(int argc, char *argv[]) {
     string inputFile = "source.txt";
-    if (argc > 1)
+    bool showGraph = argc >= 3 && string(argv[2]) == "s";
+    if (argc >= 2)
         inputFile = argv[1];
-    try {
 
+
+    try {
         auto list = tryFunction(__FUNCTION__, readFileToList<int16_t, VERTEX_COUNT, STRING_SIZE>, inputFile);
 
         cout << "1. Read data from file: {" << inputFile << "}." << endl;
@@ -28,6 +30,14 @@ int main(int argc, char *argv[]) {
 
         cout << "3. Created graph." << endl;
 
+        if (showGraph) {
+            cout << "Graph: \n";
+            cout << "_____________\n\n";
+            cout << graph::to_string(graph);
+            cout << "_____________\n\n";
+        }
+
+
         cout << "4. Starting DFS." << endl;
 
         auto dfs = graph.dfs();
@@ -39,11 +49,8 @@ int main(int argc, char *argv[]) {
         graph.puzzleCombinationIsValid(dfs);
 
         cout << "7. Puzzle combination is valid." << endl;
-
     } catch (const BracedException &ex) {
-
         std::cerr << ex.what() << std::endl;
-
     }
 
     return 0;
