@@ -226,7 +226,7 @@ Also you can add these options in your IDE, for example, in **CLion** you can do
 
 * Paste the build options in **CMake Options field**:
 
-![cmakeProfileSettings](out/cmakeProfileSettings.png)
+![cmakeProfileSettings](out/cmakeOptions.png)
 
 * Press **Ok**
 
