@@ -156,7 +156,13 @@ _____________
 
 _You can see how I generated frames for this GIF here: [graphVisualization](out/visualizeGraph.py)._
 
-#### 5. We check in a cycle if the numbers are valid.
+##### 5. We output the longest path.
+
+```
+
+```
+
+#### 6. We check in a cycle if the numbers are valid.
 
 [Contents](#table-of-contents)
 
